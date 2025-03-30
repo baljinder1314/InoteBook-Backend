@@ -1,4 +1,5 @@
 import mongoose, { Schema } from "mongoose";
+import bcrypt from "bcrypt";
 
 const inoteBookUser = new Schema(
   {
@@ -10,7 +11,7 @@ const inoteBookUser = new Schema(
     },
     password: {
       type: String,
-      required: true,
+      required: [true, "password is required"],
     },
     phote: {
       type: String,
@@ -22,5 +23,15 @@ const inoteBookUser = new Schema(
   },
   { timestamps: true }
 );
+
+inoteBookUser.pre("save", async function (next) {
+  if (!this.isModified("password")) return next();
+  this.password = bcrypt.hash(this.password, 10);
+  next();
+});
+
+inoteBookUser.methods.isPasswordCorrect = async function (password) {
+  return await bcrypt.compare(password, this.password);
+};
 
 export const InoteBookUser = mongoose.model("InoteBookUser", inoteBookUser);
