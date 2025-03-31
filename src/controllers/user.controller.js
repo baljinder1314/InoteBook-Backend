@@ -4,6 +4,20 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import asyncHandle from "../utils/asyncHandler.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 
+const generateTokens = async (userId) => {
+  try {
+    const user = await InoteBookUser.findById(userId);
+    const accessToken = user.generateAccessToken();
+    const refreshToken = user.generateRefreshToken();
+
+    user.refreshToken = refreshToken;
+    await user.save({ validateBeforeSave: false });
+
+    return { accessToken, refreshToken };
+  } catch (error) {
+    throw new ApiError(500, "something went wrong while generating tokens");
+  }
+};
 const registerUser = asyncHandle(async (req, res) => {
   // get  password from req.
   // check password and username is.
@@ -63,6 +77,71 @@ const registerUser = asyncHandle(async (req, res) => {
     );
 });
 
+const loginUser = asyncHandle(async (req, res) => {
+  // password & email --> req.body
+  // check user exists or not.
+  // check password is correct?
+  // Generate Tokens
+  // send cookies
+  // send response.
 
+  const { email, password } = req.body;
 
-export { registerUser };
+  const userFind = await InoteBookUser.findOne({ email });
+
+  if (!userFind) {
+    throw new ApiError(404, "User not found with this email");
+  }
+
+  const correctPassword = userFind.isPasswordCorrect(password);
+
+  if (!correctPassword) {
+    throw new ApiError(401, "Invalid Credentials");
+  }
+
+  const { accessToken, refreshToken } = await generateTokens(userFind._id);
+
+  const loggedUser = await InoteBookUser.findById(userFind._id).select(
+    "-password -refreshToken"
+  );
+  const options = {
+    httpOnly: true,
+    secure: true,
+  };
+  return res
+    .status(200)
+    .cookie("accessToken", accessToken, options)
+    .cookie("refreshToken", refreshToken, options)
+    .json(
+      new ApiResponse(
+        200,
+        { user: loggedUser, accessToken, refreshToken },
+        "User Login Succussfully"
+      )
+    );
+});
+
+const logoutCurrentUser = asyncHandle(async (req, res) => {
+  const user = req.user._id;
+  await InoteBookUser.findByIdAndUpdate(
+    user,
+    {
+      $set: {
+        refreshToken: undefined,
+      },
+    },
+    {
+      new: true,
+    }
+  );
+  const options = {
+    httpOnly: true,
+    secure: true, // Enable in production (HTTPS only)
+  };
+  return res
+    .status(200)
+    .clearCookie("accessToken", options)
+    .json(new ApiResponse(200, {}, "logout Successfully"));
+});
+
+export { registerUser, loginUser, logoutCurrentUser };
