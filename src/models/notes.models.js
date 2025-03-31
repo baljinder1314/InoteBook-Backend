@@ -1,10 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 const notesSchema = new Schema(
   {
-    notesUser: {
-      type: Schema.Types.ObjectId,
-      ref: "InoteBookUser",
-    },
     title: {
       type: String,
       required: true,
@@ -15,6 +11,11 @@ const notesSchema = new Schema(
     },
     tags: {
       type: String,
+    },
+    user: {
+      type: Schema.Types.ObjectId,
+      ref: "InoteBookUser",
+      required: true,
     },
   },
   { timestamps: true }
