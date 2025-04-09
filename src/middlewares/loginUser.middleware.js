@@ -10,7 +10,7 @@ const validateUser = asyncHandle(async (req, res, next) => {
     req.header("Authorization")?.replace("Bearer", "");
 
   if (!userCookie) {
-    throw new ApiError(402, "Unauthorized request");
+    return res.status(402).json({ message: "Unauthorized request" });
   }
 
   const decodeToken = jwt.verify(userCookie, process.env.ACCESS_TOKEN);
@@ -20,7 +20,7 @@ const validateUser = asyncHandle(async (req, res, next) => {
   );
 
   if (!user) {
-    throw new ApiError(401, "Invalid Access token");
+    return res.status(401).json({ message: "Invalid Access token" });
   }
 
   req.user = user;

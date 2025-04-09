@@ -16,7 +16,9 @@ const addNotes = asyncHandle(async (req, res) => {
 
   // Validate that title and description are not empty
   if ([title, description].some((data) => data?.trim() === "")) {
-    throw new ApiError(402, "title and description is required");
+    return res
+      .status(402)
+      .json({ message: "title and description is required" });
   }
 
   // Create a new note in the database
@@ -29,7 +31,7 @@ const addNotes = asyncHandle(async (req, res) => {
 
   // Check if the note was successfully created
   if (!userNotes) {
-    throw new ApiError(500, "Notes are not added");
+    return res.status(500).json({ message: "Notes are not added" });
   }
 
   // Return a success response with the created note

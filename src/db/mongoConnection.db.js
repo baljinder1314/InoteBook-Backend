@@ -8,7 +8,7 @@ const mongooseConnection = async () => {
     await mongoose.connect(`${process.env.MONGOOSE_URL}/${PROJECT_NAME}`);
     console.log(`Mongoose Connect Successfully`);
   } catch (error) {
-    new ApiError(500, "Mongoose Connection Error");
+    throw new ApiError(500, "Mongoose Connection Error");
   }
 };
 

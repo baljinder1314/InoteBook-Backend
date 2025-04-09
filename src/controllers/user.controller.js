@@ -16,7 +16,9 @@ const generateTokens = async (userId) => {
 
     return { accessToken, refreshToken };
   } catch (error) {
-    throw new ApiError(500, "something went wrong while generating tokens");
+    return res
+      .status(500)
+      .json({ message: "something went wrong while generating tokens" });
   }
 };
 
@@ -35,21 +37,21 @@ const registerUser = asyncHandle(async (req, res) => {
   });
 
   if (existsUser) {
-    return res.status(402).json({user:"User Already exists"})
+    return res.status(402).json({ user: "User Already exists" });
   }
 
   // Check if photo is provided
   const photoLocalPath = req.files?.photo[0].path;
 
   if (!photoLocalPath) {
-    throw new ApiError(407, "Photo is required");
+    return res.status(407).json({ message: "Photo is required" });
   }
 
   // Upload photo to Cloudinary
   const photo = await uploadOnCloudinary(photoLocalPath);
 
   if (!photo) {
-    throw new ApiError(407, "Photo is not Uploaded");
+    return res.status(407).json({ user: "Photo is not Uploaded" });
   }
 
   // Create a new user
@@ -66,7 +68,7 @@ const registerUser = asyncHandle(async (req, res) => {
   );
 
   if (!finalUserCreated) {
-    throw new ApiError(500, "user not created");
+    return res.status(500).json({ user: "user not created" });
   }
 
   // Send success response
@@ -85,14 +87,14 @@ const loginUser = asyncHandle(async (req, res) => {
   const userFind = await InoteBookUser.findOne({ email });
 
   if (!userFind) {
-    throw new ApiError(404, "User not found with this email");
+    return res.status(404).json({ user: "User not found" });
   }
 
   // Verify if the provided password is correct
   const correctPassword = userFind.isPasswordCorrect(password);
 
   if (!correctPassword) {
-    throw new ApiError(401, "Invalid Credentials");
+    return res.status(401).json({ user: "Invalid Credentials" });
   }
 
   // Generate access and refresh tokens
