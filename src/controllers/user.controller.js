@@ -1,5 +1,4 @@
 import { InoteBookUser } from "../models/inoteBookUser.models.js";
-import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import asyncHandle from "../utils/asyncHandler.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
@@ -28,7 +27,7 @@ const registerUser = asyncHandle(async (req, res) => {
 
   // Validate required fields
   if ([username, password, email].some((data) => data?.trim() === "")) {
-    throw new ApiResponse(400, "Each fields is required");
+    return res.status(400).json({ user: "Each fields is required" });
   }
 
   // Check if user already exists
@@ -43,6 +42,7 @@ const registerUser = asyncHandle(async (req, res) => {
   // Check if photo is provided
   const photoLocalPath = req.files?.photo[0].path;
 
+  console.log(photoLocalPath)
   if (!photoLocalPath) {
     return res.status(407).json({ message: "Photo is required" });
   }
@@ -75,23 +75,23 @@ const registerUser = asyncHandle(async (req, res) => {
   return res
     .status(200)
     .json(
-      new ApiResponse(200, { finalUserCreated }, "successfully Created User")
+      new ApiResponse(200, { finalUserCreated }, "successfully Register User")
     );
 });
 
 // Controller to handle user login
 const loginUser = asyncHandle(async (req, res) => {
   const { email, password } = req.body;
-
   // Check if user exists with the provided email
   const userFind = await InoteBookUser.findOne({ email });
-
+  
   if (!userFind) {
     return res.status(404).json({ user: "User not found" });
   }
-
+  
   // Verify if the provided password is correct
-  const correctPassword = userFind.isPasswordCorrect(password);
+  const correctPassword = await userFind.isPasswordCorrect(password);
+  
 
   if (!correctPassword) {
     return res.status(401).json({ user: "Invalid Credentials" });
