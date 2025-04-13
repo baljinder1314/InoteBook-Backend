@@ -42,7 +42,6 @@ const registerUser = asyncHandle(async (req, res) => {
   // Check if photo is provided
   const photoLocalPath = req.files?.photo[0].path;
 
-  console.log(photoLocalPath)
   if (!photoLocalPath) {
     return res.status(407).json({ message: "Photo is required" });
   }
