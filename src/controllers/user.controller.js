@@ -86,7 +86,7 @@ const loginUser = asyncHandle(async (req, res) => {
   const userFind = await InoteBookUser.findOne({ email });
   
   if (!userFind) {
-    return res.status(404).json({ user: "User not found" });
+    return res.status(404).json({ user: "Enter valid Email and Password" });
   }
   
   // Verify if the provided password is correct
