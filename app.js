@@ -9,13 +9,17 @@ app.use(express.json({ limit: "16kb" }));
 app.use(express.urlencoded({ limit: "16kb" }));
 app.use(
   cors({
-    origin: "*",
+    origin: ["*", "inote-book-backend-one.vercel.app"],
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 app.use(cookieParser());
 
-
+app.get("/", (req, res) => {
+  res.send({
+    message: "Success",
+  });
+});
 
 app.use("/user", userRouter);
