@@ -9,7 +9,7 @@ app.use(express.json({ limit: "16kb" }));
 app.use(express.urlencoded({ limit: "16kb" }));
 app.use(
   cors({
-    origin: "*",
+    origin: ["*", "https://incredible-caramel-eba54d.netlify.app/"],
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
