@@ -4,8 +4,10 @@ import "dotenv/config";
 
 mongooseConnection()
   .then(
-    app.listen(process.env.PORT || 500, () => {
-      console.log(`Server runing at http://localhost:${process.env.PORT}`);
+    app.listen(process.env.PORT || 5000, () => {
+      console.log(
+        `Server running at http://localhost:${process.env.PORT || 5000}`
+      );
     })
   )
   .catch((error) => {
