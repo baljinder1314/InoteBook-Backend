@@ -9,7 +9,7 @@ app.use(express.json({ limit: "16kb" }));
 app.use(express.urlencoded({ limit: "16kb" }));
 app.use(
   cors({
-    origin: ["http://localhost:5173", "https://inotebook-front-xi.vercel.app"],
+    origin: ["http://localhost:5173", "https://inotebook-front-kappa.vercel.app"],
      
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
     allowedHeaders: ["Content-Type", "Authorization"],
