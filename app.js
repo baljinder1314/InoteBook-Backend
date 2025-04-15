@@ -9,7 +9,7 @@ app.use(express.json({ limit: "16kb" }));
 app.use(express.urlencoded({ limit: "16kb" }));
 app.use(
   cors({
-    origin: ["*", "https://incredible-caramel-eba54d.netlify.app/"],
+    origin: ["*", "https://inotebook-backend-wz64.onrender.com"],
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
