@@ -9,7 +9,7 @@ app.use(express.json({ limit: "16kb" }));
 app.use(express.urlencoded({ limit: "16kb" }));
 app.use(
   cors({
-    origin: ["*", "https://inotebook-backend-wz64.onrender.com"],
+    origin: ["http://localhost:5173", "https://inotebook-backend-wz64.onrender.com"], // Allowed origins
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
